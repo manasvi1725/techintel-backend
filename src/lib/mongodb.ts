@@ -1,22 +1,40 @@
 import mongoose from "mongoose"
 
-const MONGODB_URI = process.env.MONGODB_URI!
-
-if (!MONGODB_URI) {
-  throw new Error("❌ MONGODB_URI is missing in .env.local")
+/**
+ * Read env var and FAIL FAST.
+ * TS now knows this is a string forever.
+ */
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`❌ Environment variable ${name} not set`)
+  }
+  return value
 }
 
-let cached = (global as any).mongoose
+const MONGODB_URI = requireEnv("MONGODB_URI")
 
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null }
+type MongooseCache = {
+  conn: typeof mongoose | null
+  promise: Promise<typeof mongoose> | null
 }
+
+const globalAny = global as any
+
+if (!globalAny.mongoose) {
+  globalAny.mongoose = {
+    conn: null,
+    promise: null,
+  } as MongooseCache
+}
+
+const cached: MongooseCache = globalAny.mongoose
 
 export async function connectDB() {
   if (cached.conn) return cached.conn
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI)
+    cached.promise = mongoose.connect(MONGODB_URI).then((m) => m)
   }
 
   cached.conn = await cached.promise

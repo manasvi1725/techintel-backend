@@ -2,11 +2,11 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 
-import technologyRoutes from "./routes/technology"
-import technologyRunRoutes from "./routes/technologyRun"
-import validateRoutes from "./routes/validate"
-import globalRoutes from "./routes/global"
-import indiaRoutes from "./routes/india"
+import technologyRoutes from "./routes/technology.js"
+import technologyRunRoutes from "./routes/technologyRun.js"
+import validateRoutes from "./routes/validate.js"
+import globalRoutes from "./routes/global.js"
+import indiaRoutes from "./routes/india.js"
 
 dotenv.config()
 
@@ -51,6 +51,15 @@ app.use((_req, res) => {
 /* ---------------- SERVER START ---------------- */
 
 const PORT = process.env.PORT || 3001
+
+if (!process.env.MONGODB_URI) {
+  console.warn("⚠️  MONGODB_URI not set")
+}
+
+if (!process.env.ML_INTERNAL_TOKEN) {
+  console.warn("⚠️  ML_INTERNAL_TOKEN not set")
+}
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Backend running on port ${PORT}`)

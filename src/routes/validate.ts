@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express"
-import { validateTech } from "../lib/techValidator"
+import { validateTech } from "../lib/techValidator.js"
 
 const router = Router()
 

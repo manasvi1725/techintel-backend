@@ -6,12 +6,20 @@ const router = Router()
 const ML_TRIGGER_URL = process.env.ML_TRIGGER_URL!
 const ML_TOKEN = process.env.ML_INTERNAL_TOKEN!
 
+
+
 /**
  * POST /api/technology/:name/run
  * Triggers ML pipeline for a single technology
  */
 router.post("/:name/run", async (req: Request, res: Response) => {
   try {
+    const token = req.headers["x-internal-token"]
+
+if (token !== process.env.ML_INTERNAL_TOKEN) {
+  return res.status(401).json({ error: "Unauthorized" })
+}
+
     const name = Array.isArray(req.params.name) ? req.params.name[0] : req.params.name
 
 
