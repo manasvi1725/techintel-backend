@@ -7,6 +7,9 @@ const router = Router()
 const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL
 const ML_INTERNAL_TOKEN = process.env.ML_INTERNAL_TOKEN
 
+console.log("BACKEND_BASE_URL:", BACKEND_BASE_URL)
+console.log("ML_INTERNAL_TOKEN exists:", !!ML_INTERNAL_TOKEN)
+
 /**
  * GET /api/technology/:name
  */
