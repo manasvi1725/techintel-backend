@@ -4,6 +4,9 @@ import { Technology } from "../models/technology.js"
 
 const router = Router()
 
+const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL
+const ML_INTERNAL_TOKEN = process.env.ML_INTERNAL_TOKEN
+
 /**
  * GET /api/technology/:name
  */
@@ -24,16 +27,36 @@ router.get("/:name", async (req: Request, res: Response) => {
 
     const doc = await Technology.findOne({ name: tech }).lean()
 
-    if (!doc || !doc.latest_json) {
-      return res.status(404).json({
-        error: "Technology data not available",
-        hint: "Trigger /api/technology/:name/run to generate data",
+    // ✅ DATA EXISTS → RETURN IT
+    if (doc?.latest_json) {
+      return res.json({
+        status: "ready",
+        dashboard: doc.latest_json.dashboard ?? null,
+        knowledge_graph: doc.latest_json.knowledge_graph ?? null,
       })
     }
 
-    return res.json({
-      dashboard: doc.latest_json.dashboard ?? null,
-      knowledge_graph: doc.latest_json.knowledge_graph ?? null,
+    // ⚠️ CACHE MISS → TRIGGER ML INTERNALLY
+    console.warn(`⚠️ Cache miss for "${tech}". Triggering ML internally.`)
+
+    if (!BACKEND_BASE_URL || !ML_INTERNAL_TOKEN) {
+      console.error("❌ Missing backend ML env vars")
+      return res.status(500).json({ error: "ML pipeline not configured" })
+    }
+
+    // Fire-and-forget ML trigger
+    fetch(`${BACKEND_BASE_URL}/api/technology/${tech}/run`, {
+      method: "POST",
+      headers: {
+        "x-internal-token": ML_INTERNAL_TOKEN,
+      },
+    }).catch((err) => {
+      console.error("❌ Failed to trigger ML:", err)
+    })
+
+    return res.status(202).json({
+      status: "processing",
+      message: "Technology data is being generated",
     })
   } catch (err) {
     console.error("❌ Failed to fetch technology:", err)
