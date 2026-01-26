@@ -1,48 +1,44 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response } from "express"
+import { connectDB } from "../lib/mongodb.js"
+import { Technology } from "../models/technology.js"
+import { runMLAndPersist } from "../services/technologyService.js"
 
-const router = Router();
-
-const ML_TRIGGER_URL = process.env.ML_TRIGGER_URL!;
-const ML_TOKEN = process.env.ML_INTERNAL_TOKEN!;
+const router = Router()
+const ML_TOKEN = process.env.ML_INTERNAL_TOKEN!
 
 router.post("/:name/run", async (req: Request, res: Response) => {
   try {
-    const token = req.headers["x-internal-token"];
+    const token = req.headers["x-internal-token"]
     if (token !== ML_TOKEN) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ error: "Unauthorized" })
     }
 
     const tech = decodeURIComponent(req.params.name)
       .toLowerCase()
       .trim()
-      .replace(/\s+/g, "_");
+      .replace(/\s+/g, "_")
 
-    console.log("🔁 Triggering ML for", tech);
+    console.log("🔁 Force recompute ML for:", tech)
 
-    const mlRes = await fetch(`${ML_TRIGGER_URL}/run`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-internal-token": ML_TOKEN,
-      },
-      body: JSON.stringify({ tech }),
-    });
+    await runMLAndPersist(tech)
 
-    if (!mlRes.ok) {
-      const text = await mlRes.text();
-      console.error("❌ ML trigger failed:", text);
-      return res.status(500).json({ error: "ML trigger failed" });
+    await connectDB()
+    const doc = await Technology.findOne({ name: tech }).lean()
+
+    if (!doc?.latest_json) {
+      throw new Error("ML completed but data missing in DB")
     }
 
     return res.json({
-      status: "started",
+      status: "refreshed",
       technology: tech,
-      message: "ML pipeline triggered successfully",
-    });
+      dashboard: doc.latest_json.dashboard,
+      knowledge_graph: doc.latest_json.knowledge_graph,
+    })
   } catch (err) {
-    console.error("❌ Failed to trigger ML:", err);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("❌ POST run failed:", err)
+    return res.status(500).json({ error: "Internal server error" })
   }
-});
+})
 
-export default router;
+export default router

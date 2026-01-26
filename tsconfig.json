@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
@@ -10,6 +10,17 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
+  "files": ["./src/server.ts",
+        "./src/lib/mongodb.ts",
+        "./src/lib/techValidator.ts",
+        "./src/models/technology.ts",
+        "./src/routes/global.ts",
+        "./src/routes/health.ts",
+        "./src/routes/india.ts",
+        "./src/routes/technology.ts",
+        "./src/routes/technologyRun.ts",
+        "./src/routes/validate.ts",
+      "src/scripts/seedGlobal.ts"]
 }
