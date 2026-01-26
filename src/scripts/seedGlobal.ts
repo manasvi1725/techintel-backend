@@ -1,39 +1,44 @@
+import "dotenv/config"
 import fs from "fs"
 import path from "path"
-import { connectDB } from "../lib/mongodb.js"
-import { Technology } from"../models/technology.js"
+import  {connectDB}  from "../lib/mongodb.ts"
+import  Technology  from "../models/technology.ts"
 
 async function seedGlobal() {
-  await connectDB()
+  try {
+    await connectDB()
 
-  const patents = JSON.parse(
-    fs.readFileSync(path.join("data/global/global_patents.json"), "utf-8")
-  )
-  const trends = JSON.parse(
-    fs.readFileSync(path.join("data/global/global_trends.json"), "utf-8")
-  )
-  const investments = JSON.parse(
-    fs.readFileSync(path.join("data/global/global_investments.json"), "utf-8")
-  )
+    const basePath = path.resolve("data") // adjust if needed
 
-  await Technology.findOneAndUpdate(
-    { name: "__global__" },
-    {
-      name: "__global__",
-      latest_json: {
-        global: {
-          patents,
-          trends,
-          investments,
+    const patents = JSON.parse(
+      fs.readFileSync(path.join(basePath, "india/patents.json"), "utf-8")
+    )
+
+    const publications = JSON.parse(
+      fs.readFileSync(path.join(basePath, "india/publications.json"), "utf-8")
+    )
+
+    await Technology.findOneAndUpdate(
+      { name: "__india__" },
+      {
+        name: "__india__",
+        latest_json: {
+          india: {
+            publications,
+            patents          
+          },
         },
+        updated_at: new Date(),
       },
-    },
-    { upsert: true, new: true }
-  )
+      { upsert: true, new: true }
+    )
 
-  console.log("✅ Global data seeded")
-  process.exit(0)
+    console.log("✅ Indian data seeded successfully")
+    process.exit(0)
+  } catch (err) {
+    console.error("❌ Error seeding indian data:", err)
+    process.exit(1)
+  }
 }
 
-seedGlobal().catch(console.error)
-export {}
+seedGlobal()
