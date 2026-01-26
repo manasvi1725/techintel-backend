@@ -21,7 +21,20 @@ export async function runMLAndPersist(tech: string): Promise<void> {
     throw new Error(`ML pipeline failed: ${text}`)
   }
 
-  const { dashboard, knowledge_graph } = await mlRes.json()
+  const raw = await mlRes.text()
+
+  const jsonStart = raw.indexOf("{")
+  if (jsonStart === -1) {
+    throw new Error("ML stdout did not contain JSON")
+  }
+
+  const mlJson = JSON.parse(raw.slice(jsonStart))
+
+  const { dashboard, knowledge_graph } = mlJson
+
+  if (!dashboard || !knowledge_graph) {
+    throw new Error("Invalid ML payload shape")
+  }
 
   await connectDB()
 
