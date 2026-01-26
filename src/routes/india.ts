@@ -16,20 +16,37 @@ function extractYear(dateStr?: string): number | undefined {
  */
 router.get("/", async (_req: Request, res: Response) => {
   try {
+    console.log("🇮🇳 [/api/india] request received")
+
     await connectDB()
+    console.log("🇮🇳 [/api/india] MongoDB connected")
 
     /* ================= FETCH DOCUMENTS ================= */
 
     const indiaDoc = await Technology.findOne({ name: "__india__" })
     const globalDoc = await Technology.findOne({ name: "__global__" })
 
+    console.log("📦 [/api/india] indiaDoc exists:", !!indiaDoc)
+    console.log("📦 [/api/india] globalDoc exists:", !!globalDoc)
+
     if (!indiaDoc?.latest_json?.india) {
+      console.error("❌ [/api/india] latest_json.india is MISSING")
       return res.status(404).json({ error: "India signals not available" })
     }
+
+    console.log(
+      "📊 [/api/india] india section keys:",
+      Object.keys(indiaDoc.latest_json.india)
+    )
 
     /* ================= PUBLICATIONS ================= */
 
     const publicationsRaw = indiaDoc.latest_json.india.publications
+
+    console.log(
+      "📚 [/api/india] publication fields:",
+      Object.keys(publicationsRaw?.fields ?? {})
+    )
 
     const publications =
       publicationsRaw
@@ -43,6 +60,11 @@ router.get("/", async (_req: Request, res: Response) => {
           )
         : []
 
+    console.log(
+      "📚 [/api/india] publications count:",
+      publications.length
+    )
+
     publications.sort((a: any, b: any) => {
       if (b.year !== a.year) return b.year - a.year
       return (b.academic_weight ?? 0) - (a.academic_weight ?? 0)
@@ -52,20 +74,29 @@ router.get("/", async (_req: Request, res: Response) => {
 
     const patentsRaw = indiaDoc.latest_json.india.patents
 
-   const institutes = Object.values(
-  patentsRaw.institutes as Record<string, any[]>
-)
+    console.log(
+      "📑 [/api/india] patent institutes:",
+      Object.keys(patentsRaw?.institutes ?? {})
+    )
 
-const patents = institutes.flatMap((list) =>
-  list.map((p: any) => ({
-    title: p.title,
-    link: p.link,
-    year: p.year ?? 0,
-    institute: p.institute,
-    strategic_weight: p.year ? Math.max(1, p.year - 2010) : 1,
-  }))
-)
+    const institutes = Object.values(
+      patentsRaw.institutes as Record<string, any[]>
+    )
 
+    const patents = institutes.flatMap((list) =>
+      list.map((p: any) => ({
+        title: p.title,
+        link: p.link,
+        year: p.year ?? 0,
+        institute: p.institute,
+        strategic_weight: p.year ? Math.max(1, p.year - 2010) : 1,
+      }))
+    )
+
+    console.log(
+      "📑 [/api/india] patents count:",
+      patents.length
+    )
 
     patents.sort((a: any, b: any) => {
       if ((b.year ?? 0) !== (a.year ?? 0)) {
@@ -76,8 +107,25 @@ const patents = institutes.flatMap((list) =>
 
     /* ================= INVESTMENTS (FROM GLOBAL) ================= */
 
+    const countries =
+      globalDoc?.latest_json?.global?.investments?.countries
+
+    if (!countries) {
+      console.error("❌ [/api/india] investments.countries is MISSING")
+    } else {
+      console.log(
+        "🌐 [/api/india] available investment countries:",
+        Object.keys(countries)
+      )
+    }
+
     const india =
-      globalDoc?.latest_json?.global?.investments?.countries?.india
+      countries?.india
+
+    console.log(
+      "💰 [/api/india] india investments exists:",
+      !!india
+    )
 
     const investments =
       india
@@ -92,6 +140,11 @@ const patents = institutes.flatMap((list) =>
             }))
           )
         : []
+
+    console.log(
+      "💰 [/api/india] investments count:",
+      investments.length
+    )
 
     investments.sort((a: any, b: any) => {
       if ((b.year ?? 0) !== (a.year ?? 0)) {
@@ -115,7 +168,7 @@ const patents = institutes.flatMap((list) =>
       },
     })
   } catch (err) {
-    console.error("❌ India signals route error:", err)
+    console.error("❌ [/api/india] route crashed:", err)
     return res.status(500).json({ error: "Internal server error" })
   }
 })
