@@ -21,19 +21,17 @@ export async function runMLAndPersist(tech: string): Promise<void> {
     throw new Error(`ML pipeline failed: ${text}`)
   }
 
-  const raw = await mlRes.text()
+  // ⬇️ This is FastAPI JSON, NOT subprocess stdout
+  const mlJson = await mlRes.json()
 
-  const jsonStart = raw.indexOf("{")
-  if (jsonStart === -1) {
-    throw new Error("ML stdout did not contain JSON")
+  if (!mlJson?.data) {
+    throw new Error("ML response missing data field")
   }
 
-  const mlJson = JSON.parse(raw.slice(jsonStart))
-
-  const { dashboard, knowledge_graph } = mlJson
+  const { dashboard, knowledge_graph } = mlJson.data
 
   if (!dashboard || !knowledge_graph) {
-    throw new Error("Invalid ML payload shape")
+    throw new Error("ML data missing dashboard or knowledge_graph")
   }
 
   await connectDB()
