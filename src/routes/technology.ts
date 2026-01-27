@@ -52,4 +52,4 @@ router.get("/:name", async (req: Request, res: Response) => {
   }
 })
 
-export default router
+
