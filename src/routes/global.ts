@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express"
 import { connectDB } from "../lib/mongodb.js"
-import {Technology} from "../models/technology.js"
+import {Global} from "../models/technology.js"
 
 const router = Router()
 
@@ -15,7 +15,7 @@ router.get("/", async (_req: Request, res: Response) => {
     await connectDB()
     console.log("🌍 [/api/global] MongoDB connected")
 
-    const doc = await Technology.findOne({ name: "__global__" })
+    const doc = await Global.findOne({ name: "__global__" })
 
     if (!doc) {
       console.error("❌ [/api/global] __global__ document NOT FOUND")

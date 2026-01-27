@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express"
 import { connectDB } from "../lib/mongodb.js"
-import {Technology} from "../models/technology.js"
+import {Global, India} from "../models/technology.js"
 
 const router = Router()
 
@@ -23,8 +23,8 @@ router.get("/", async (_req: Request, res: Response) => {
 
     /* ================= FETCH DOCUMENTS ================= */
 
-    const indiaDoc = await Technology.findOne({ name: "__india__" })
-    const globalDoc = await Technology.findOne({ name: "__global__" })
+    const indiaDoc = await India.findOne({ name: "__india__" })
+    const globalDoc = await Global.findOne({ name: "__global__" })
 
     console.log("📦 [/api/india] indiaDoc exists:", !!indiaDoc)
     console.log("📦 [/api/india] globalDoc exists:", !!globalDoc)
