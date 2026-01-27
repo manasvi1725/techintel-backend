@@ -9,4 +9,4 @@ var TechnologySchema = new Schema({
     updated_at: { type: Date, default: Date.now },
 }, { timestamps: true });
 exports.Technology = models.Technology || model("Technology", TechnologySchema);
-export default Technology
+

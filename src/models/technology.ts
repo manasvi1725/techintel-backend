@@ -15,4 +15,4 @@ export const Technology =
   models.Technology || model("india", TechnologySchema)
 
 
-export default Technology
+

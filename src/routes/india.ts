@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express"
 import { connectDB } from "../lib/mongodb.js"
-import Technology from "../models/technology.js"
+import {Technology} from "../models/technology.js"
 
 const router = Router()
 
