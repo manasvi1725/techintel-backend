@@ -11,8 +11,10 @@ const TechnologySchema = new Schema(
   { timestamps: true }
 )
 
-export const Technology =
-  models.Technology || model("india", TechnologySchema)
+
+export const Global = model("Global", TechnologySchema, "globals")
+export const India = model("India", TechnologySchema, "indias")
+export const Technology = model("Technology", TechnologySchema, "technologies")
 
 
 
