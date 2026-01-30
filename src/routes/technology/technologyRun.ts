@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
-import { connectDB } from "../lib/mongodb.js"
-import { Technology } from "../models/technology.js"
-import { runMLAndPersist } from "../services/technologyService.js"
+import { connectDB } from "../../lib/mongodb.js"
+import { Technology } from "../../models/technology.js"
+import { runMLAndPersist } from "../../services/technologyService.js"
 
 const router = Router()
 const ML_TOKEN = process.env.ML_INTERNAL_TOKEN!
