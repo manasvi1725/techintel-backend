@@ -1,11 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import technologyRoutes from "./routes/technology.js";
-import technologyRunRoutes from "./routes/technologyRun.js";
+import technologyRoutes from "./routes/technology/technology.js";
+import technologyRunRoutes from "./routes/technology/technologyRun.js";
 import validateRoutes from "./routes/validate.js";
 import globalRoutes from "./routes/global.js";
 import indiaRoutes from "./routes/india.js";
+import { startDailyRefreshJob } from "./jobs/dailyRefresh.js";
+import internalRefreshRoutes from "./routes/internalRefresh.js";
 dotenv.config();
 const app = express();
 /* ---------------- MIDDLEWARE ---------------- */
@@ -30,6 +32,10 @@ app.use("/api/validate-tech", validateRoutes);
  */
 app.use("/api/global", globalRoutes);
 app.use("/api/india", indiaRoutes);
+/**
+ * Manual Trigger
+ */
+app.use("/internal", internalRefreshRoutes);
 /* ---------------- FALLBACK ---------------- */
 app.use((_req, res) => {
     res.status(404).json({ error: "Route not found" });
@@ -45,4 +51,5 @@ if (!process.env.ML_INTERNAL_TOKEN) {
 app.listen(PORT, () => {
     console.log(`🚀 Backend running on port ${PORT}`);
 });
+startDailyRefreshJob();
 export default app;

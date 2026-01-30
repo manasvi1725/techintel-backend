@@ -44,6 +44,7 @@ const ABBREVIATIONS = {
     qml: "quantum machine learning",
     qnn: "quantum neural networks",
     hri: "human robot interaction",
+    genai: "generative artificial intelligence"
 };
 /* ================== TECH SIGNALS ================== */
 const TECH_KEYWORDS = [
@@ -53,7 +54,7 @@ const TECH_KEYWORDS = [
 ];
 const TECH_NOUNS = [
     "security", "hardware", "software", "interface", "protocol",
-    "architecture", "platform", "framework", "network", "system",
+    "architecture", "platform", "framework", "network", "system","blockchain"
 ];
 const TECH_SUFFIXES = [
     "ics", "tech", "logy", "tronics", "engineering", "science", "systems", "sensors"
@@ -66,6 +67,7 @@ const CANONICAL_TECHS = [
     "natural language processing",
     "quantum computing",
     "hypersonic technology",
+    "blockchain"
 ];
 /* ================== STRING SIMILARITY ================== */
 // Levenshtein distance
