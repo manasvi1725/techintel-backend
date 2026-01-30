@@ -8,6 +8,11 @@ import validateRoutes from "./routes/validate.js"
 import globalRoutes from "./routes/global.js"
 import indiaRoutes from "./routes/india.js"
 
+import { startDailyRefreshJob } from "./jobs/dailyRefresh.js"
+import internalRefreshRoutes from "./routes/internalRefresh.js"
+
+
+
 dotenv.config()
 
 const app = express()
@@ -64,5 +69,9 @@ if (!process.env.ML_INTERNAL_TOKEN) {
 app.listen(PORT, () => {
   console.log(`🚀 Backend running on port ${PORT}`)
 })
+
+startDailyRefreshJob()
+
+app.use("/internal", internalRefreshRoutes)
 
 export default app
