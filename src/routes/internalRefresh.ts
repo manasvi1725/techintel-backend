@@ -1,3 +1,6 @@
+console.log("📦 internalrefresh.ts loaded")
+
+
 import { Router } from "express"
 import { triggerDailyRefresh } from "../jobs/dailyRefresh.js"
 
