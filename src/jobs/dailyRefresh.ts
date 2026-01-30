@@ -18,11 +18,11 @@ export function startDailyRefreshJob() {
     console.log("🌙 Nightly refresh started")
 
     try {
-      await refreshGlobal()
-      console.log("🌍 Global refresh done")
+      // await refreshGlobal()
+      // console.log("🌍 Global refresh done")
 
-      await refreshIndia()
-      console.log("🇮🇳 India refresh done")
+      // await refreshIndia()
+      // console.log("🇮🇳 India refresh done")
 
       await refreshTechnologies()
       console.log("🧠 Technologies refresh done")
