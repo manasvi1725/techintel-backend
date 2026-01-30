@@ -47,6 +47,13 @@ app.use("/api/validate-tech", validateRoutes)
 app.use("/api/global", globalRoutes)
 app.use("/api/india", indiaRoutes)
 
+
+
+/**
+ * Manual Trigger
+ */
+app.use("/internal", internalRefreshRoutes)
+
 /* ---------------- FALLBACK ---------------- */
 
 app.use((_req, res) => {
@@ -72,6 +79,6 @@ app.listen(PORT, () => {
 
 startDailyRefreshJob()
 
-app.use("/internal", internalRefreshRoutes)
+
 
 export default app
