@@ -5,5 +5,6 @@ const TechnologySchema = new Schema({
     latest_json: { type: Schema.Types.Mixed, default: null },
     updated_at: { type: Date, default: Date.now },
 }, { timestamps: true });
-export const Technology = models.Technology || model("india", TechnologySchema);
-export default Technology;
+export const Global = model("Global", TechnologySchema, "globals");
+export const India = model("India", TechnologySchema, "indias");
+export const Technology = model("Technology", TechnologySchema, "technologies");

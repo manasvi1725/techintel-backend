@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { connectDB } from "../lib/mongodb.js";
-import Technology from "../models/technology.js";
+import { Global } from "../models/technology.js";
 const router = Router();
 /**
  * GET /api/global
@@ -11,7 +11,7 @@ router.get("/", async (_req, res) => {
         console.log("🌍 [/api/global] request received");
         await connectDB();
         console.log("🌍 [/api/global] MongoDB connected");
-        const doc = await Technology.findOne({ name: "__global__" });
+        const doc = await Global.findOne({ name: "__global__" });
         if (!doc) {
             console.error("❌ [/api/global] __global__ document NOT FOUND");
             return res.status(404).json({ error: "Global document not found" });

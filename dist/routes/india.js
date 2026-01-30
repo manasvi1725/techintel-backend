@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { connectDB } from "../lib/mongodb.js";
-import Technology from "../models/technology.js";
+import { Global, India } from "../models/technology.js";
 const router = Router();
 function extractYear(dateStr) {
     if (!dateStr)
@@ -18,8 +18,8 @@ router.get("/", async (_req, res) => {
         await connectDB();
         console.log("🇮🇳 [/api/india] MongoDB connected");
         /* ================= FETCH DOCUMENTS ================= */
-        const indiaDoc = await Technology.findOne({ name: "__india__" });
-        const globalDoc = await Technology.findOne({ name: "__global__" });
+        const indiaDoc = await India.findOne({ name: "__india__" });
+        const globalDoc = await Global.findOne({ name: "__global__" });
         console.log("📦 [/api/india] indiaDoc exists:", !!indiaDoc);
         console.log("📦 [/api/india] globalDoc exists:", !!globalDoc);
         if (!indiaDoc?.latest_json?.india) {
