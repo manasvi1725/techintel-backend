@@ -21,11 +21,11 @@ export function startDailyRefreshJob() {
       // await refreshGlobal()
       // console.log("🌍 Global refresh done")
 
-      // await refreshIndia()
-      // console.log("🇮🇳 India refresh done")
+      await refreshIndia()
+      console.log("🇮🇳 India refresh done")
 
-      await refreshTechnologies()
-      console.log("🧠 Technologies refresh done")
+      // await refreshTechnologies()
+      // console.log("🧠 Technologies refresh done")
 
       console.log("✅ Nightly refresh finished")
     } catch (err) {
